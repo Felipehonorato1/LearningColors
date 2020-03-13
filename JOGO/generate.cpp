@@ -19,10 +19,10 @@ Mat image;
 
 int RandomPath = Generate(4);
 int RandomImg = Generate(3);
-cout << "\n ============SELEÇÃO DE COR=================================" << endl;
+cout << "\n ================SELEÇÃO DE COR=================================" << endl;
 cout << "MAIN FILE FROM PATH: " << RandomPath << endl;
 cout << "WITH INDEX OF: " << RandomImg << endl;
-cout << "==============================================================" << endl;
+cout << "==============================================================\n" << endl;
 
 
 // PASTA 0 - VERDE
@@ -33,29 +33,27 @@ cout << "==============================================================" << endl
 
 int paths[] = {0,1,2,3};
 int imgs[] = {0,1,2};
-vector<int> cabinhos (paths,paths + sizeof(paths) /sizeof(int));
 vector<int> ibagens (imgs, imgs + sizeof(imgs) /sizeof(int));
 
-cabinhos.erase(cabinhos.begin()+RandomPath);
 ibagens.erase(ibagens.begin()+RandomImg);
-
-cout << "TAMANHO DO MEU VECTOR DE PATHS: " << cabinhos.size() << endl;
-cout << "EXPECTED TO BE 3" << endl;
-cout << "TAMANHO DO VECTOR DE IMAGENS: " << ibagens.size() << endl;
-cout << "EXPECTED TO BE 2" << endl;
-
-int SelectedColor;
 
 Mat Otherimages[4];
 
-for(int i = 0; i < 4; i++){
+string otherPaths;
+int OddImage;
+int i;
+for(i = 0; i < 4; i++){
     // srand(time(NULL));
     // random_shuffle(ibagens.begin(),ibagens.end());
-    int OddImage = ibagens.at(rand()%2);
-    string otherPaths = "cor" + to_string(i) + "/" + to_string(OddImage) + ".png";
+    if(i == RandomPath){
+        OddImage = ibagens.at(rand()%2);
+    }else
+        OddImage = rand()%3;
+    otherPaths = "cor" + to_string(i) + "/" + to_string(OddImage) + ".png";
+    cout << "PATH SENDO LIDO: " << otherPaths << endl;
     Otherimages[i] = imread(otherPaths);
-    cout << "[IMAGE TAKEN FROM PATH: " << i << " INDEX: " << OddImage<< "]" << endl; 
-}
+
+    }
 
 
 string MainColorPath = "cor" + to_string(RandomPath) + "/" + to_string(RandomImg) + ".png";
@@ -70,22 +68,26 @@ if(!image.data){
     cout << "Tentei no path: " << MainColorPath << endl;
 }
 
-imshow("Display window", image);
+cout << "SHOWING SELECTED" << endl;
+imshow("SELECTED", image);
 waitKey(0);
 
-imshow("IMAGEM DE BORDA", Otherimages[1]);
+imshow("IMAGEM DE BORDA 1", Otherimages[0]);
+cout << "SHOWING SELECTED 1" << endl;
 waitKey(0);
 
+imshow("IMAGEM DE BORDA 2", Otherimages[1]);
+cout << "SHOWING SELECTED 2" << endl;
+waitKey(0); 
 
-imshow("IMAGEM DE BORDA", Otherimages[2]);
+imshow("IMAGEM DE BORDA 3", Otherimages[2]);
+cout << "SHOWING SELECTED 3" << endl;
 waitKey(0);
 
-imshow("IMAGEM DE BORDA", Otherimages[3]);
+imshow("IMAGEM DE BORDA 4", Otherimages[3]);
+cout << "SHOWING SELECTED 4" << endl;
 waitKey(0);
 
-
-imshow("IMAGEM DE BORDA", Otherimages[4]);
-waitKey(0);
 
 return 0;
 }

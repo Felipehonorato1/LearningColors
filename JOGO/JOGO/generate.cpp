@@ -122,7 +122,7 @@ int main(int argc, const char** argv){
     CascadeClassifier cascade, nestedCascade;
     double scale = 1;
     
-    string folder = "/home/lara/Downloads/opencv-4.1.2/data/haarcascades/";
+    string folder = "/home/felipe/Downloads/opencv-4.1.2/data/haarcascades/";
     cascadeName = folder + "haarcascade_frontalface_alt.xml";
     nestedCascadeName = folder + "haarcascade_eye_tree_eyeglasses.xml";
     inputName = "/dev/video0";
@@ -218,6 +218,7 @@ int main(int argc, const char** argv){
         while(1)
         {
             capture >> frame;
+            flip(frame,frame,1);
             if( frame.empty() )
                 break;
 

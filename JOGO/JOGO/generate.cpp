@@ -42,9 +42,9 @@ void PreencheCores(vector<string> &cores)
     cores.push_back("vermelho");
 }
 
-void detectAndDraw( Mat& img, CascadeClassifier& cascade,
+int detectAndDraw( Mat& img, CascadeClassifier& cascade,
                     CascadeClassifier& nestedCascade,
-                    double scale)
+                    double scale, string MainColorPath, string otherPaths[4])
 {
     static int frames = 0;
     double t = 0;
@@ -86,6 +86,31 @@ void detectAndDraw( Mat& img, CascadeClassifier& cascade,
     {
         Rect r = faces[i];
         printf( "[%3d, %3d]\n", r.x, r.y);
+
+        if(((r.x > 20)&&(r.x < 120))&&((r.y > 20)&&(r.y < 90)))
+        {
+            if(MainColorPath[3] == otherPaths[0][3])
+                return 1;
+        }
+
+        else if(((r.x > 420)&&(r.x < 520))&&((r.y > 20)&&(r.y < 90)))
+        {
+            if(MainColorPath[3] == otherPaths[1][3])
+                return 1;
+        }
+        
+        else if (((r.x > 20)&&(r.x < 120))&&((r.y > 300)&&(r.y < 370)))
+        {
+            if(MainColorPath[3] == otherPaths[2][3])
+                return 1;
+        }
+
+        else if (((r.x > 420)&&(r.x < 520))&&((r.y > 300)&&(r.y < 370)))
+        {
+            if(MainColorPath[3] == otherPaths[3][3])
+                return 1;
+        }
+
         Mat smallImgROI;
         vector<Rect> nestedObjects;
         Point center;
@@ -107,6 +132,8 @@ void detectAndDraw( Mat& img, CascadeClassifier& cascade,
     }
 
     imshow( "result", img );
+
+    return 0;
 }
 
 int Generate(int total){
@@ -122,7 +149,7 @@ int main(int argc, const char** argv){
     CascadeClassifier cascade, nestedCascade;
     double scale = 1;
     
-    string folder = "/home/felipe/Downloads/opencv-4.1.2/data/haarcascades/";
+    string folder = "/home/lara/Downloads/opencv-4.1.2/data/haarcascades/";
     cascadeName = folder + "haarcascade_frontalface_alt.xml";
     nestedCascadeName = folder + "haarcascade_eye_tree_eyeglasses.xml";
     inputName = "/dev/video0";
@@ -130,109 +157,117 @@ int main(int argc, const char** argv){
 
     Mat image; 
 
-    int RandomPath = Generate(4);
-    int RandomImg = Generate(3);
-    cout << "\n ================SELEÇÃO DE COR=================================" << endl;
-    cout << "MAIN FILE FROM PATH: " << RandomPath << endl;
-    cout << "WITH INDEX OF: " << RandomImg << endl;
-    cout << "==============================================================\n" << endl;
+    while(1)
+    {
+        int RandomPath = Generate(4);
+        int RandomImg = Generate(3);
+        cout << "\n ================SELEÇÃO DE COR=================================" << endl;
+        cout << "MAIN FILE FROM PATH: " << RandomPath << endl;
+        cout << "WITH INDEX OF: " << RandomImg << endl;
+        cout << "==============================================================\n" << endl;
 
 
-    // PASTA 0 - VERDE
-    // PASTA 1 - VERMELHO
-    // PASTA 2 - ROSA
-    // PASTA 3 - AZUL
+        // PASTA 0 - VERDE
+        // PASTA 1 - VERMELHO
+        // PASTA 2 - ROSA
+        // PASTA 3 - AZUL
 
 
-    int paths[] = {0,1,2,3};
-    int imgs[] = {0,1,2};
-    vector<int> ibagens (imgs, imgs + sizeof(imgs) /sizeof(int));
+        int paths[] = {0,1,2,3};
+        int imgs[] = {0,1,2};
+        vector<int> ibagens (imgs, imgs + sizeof(imgs) /sizeof(int));
 
-    ibagens.erase(ibagens.begin()+RandomImg);
+        ibagens.erase(ibagens.begin()+RandomImg);
 
-    Mat Otherimages[4];
+        Mat Otherimages[4];
 
-    string otherPaths;
-    int OddImage;
-    int i;
-    for(i = 0; i < 4; i++){
-        // srand(time(NULL));
-        // random_shuffle(ibagens.begin(),ibagens.end());
-        if(i == RandomPath){
-            OddImage = ibagens.at(rand()%2);
-        }else
-            OddImage = rand()%3;
-            otherPaths = "cor" + to_string(i) + "/" + to_string(OddImage) + ".png";
-            cout << "PATH SENDO LIDO: " << otherPaths << endl;
-            Otherimages[i] = imread(otherPaths, IMREAD_UNCHANGED);
+        string otherPaths[4];
+        int OddImage;
+        int i;
+        for(i = 0; i < 4; i++){
+            // srand(time(NULL));
+            // random_shuffle(ibagens.begin(),ibagens.end());
+            if(i == RandomPath){
+                OddImage = ibagens.at(rand()%2);
+            }else
+                OddImage = rand()%3;
+                otherPaths[i] = "cor" + to_string(i) + "/" + to_string(OddImage) + ".png";
+                cout << "PATH SENDO LIDO: " << otherPaths[i] << endl;
+                Otherimages[i] = imread(otherPaths[i], IMREAD_UNCHANGED);
+            }
+
+
+            string MainColorPath = "cor" + to_string(RandomPath) + "/" + to_string(RandomImg) + ".png";
+
+            // LÊ A IMAGEM SELECIONADA
+            image = imread(MainColorPath, IMREAD_UNCHANGED);
+            if(!image.data){
+                cout << "[ERRO] Imagem nao encontrada" << endl;
+                cout << "Tentei no path: " << MainColorPath << endl;
         }
 
+        /*
+        cout << "SHOWING SELECTED" << endl;
+        imshow("SELECTED", image);
+        waitKey(0);
 
-        string MainColorPath = "cor" + to_string(RandomPath) + "/" + to_string(RandomImg) + ".png";
+        imshow("IMAGEM DE BORDA 1", Otherimages[0]);
+        cout << "SHOWING SELECTED 1" << endl;
+        waitKey(0);
 
-        // LÊ A IMAGEM SELECIONADA
-        image = imread(MainColorPath, IMREAD_UNCHANGED);
-        if(!image.data){
-            cout << "[ERRO] Imagem nao encontrada" << endl;
-            cout << "Tentei no path: " << MainColorPath << endl;
-    }
+        imshow("IMAGEM DE BORDA 2", Otherimages[1]);
+        cout << "SHOWING SELECTED 2" << endl;
+        waitKey(0); 
 
-    /*
-    cout << "SHOWING SELECTED" << endl;
-    imshow("SELECTED", image);
-    waitKey(0);
+        imshow("IMAGEM DE BORDA 3", Otherimages[2]);
+        cout << "SHOWING SELECTED 3" << endl;
+        waitKey(0);
 
-    imshow("IMAGEM DE BORDA 1", Otherimages[0]);
-    cout << "SHOWING SELECTED 1" << endl;
-    waitKey(0);
+        imshow("IMAGEM DE BORDA 4", Otherimages[3]);
+        cout << "SHOWING SELECTED 4" << endl;
+        waitKey(0);
+        */
 
-    imshow("IMAGEM DE BORDA 2", Otherimages[1]);
-    cout << "SHOWING SELECTED 2" << endl;
-    waitKey(0); 
-
-    imshow("IMAGEM DE BORDA 3", Otherimages[2]);
-    cout << "SHOWING SELECTED 3" << endl;
-    waitKey(0);
-
-    imshow("IMAGEM DE BORDA 4", Otherimages[3]);
-    cout << "SHOWING SELECTED 4" << endl;
-    waitKey(0);
-    */
-
-    if (!nestedCascade.load(samples::findFileOrKeep(nestedCascadeName)))
-        cerr << "WARNING: Could not load classifier cascade for nested objects" << endl;
-    if (!cascade.load(samples::findFile(cascadeName)))
-    {
-        cerr << "ERROR: Could not load classifier cascade" << endl;
-        return -1;
-    }
-
-    if(!capture.open(inputName))
-    {
-        cout << "Capture from camera #" <<  inputName << " didn't work" << endl;
-        return 1;
-    }
-
-    if( capture.isOpened() )
-    {
-        while(1)
+        if (!nestedCascade.load(samples::findFileOrKeep(nestedCascadeName)))
+            cerr << "WARNING: Could not load classifier cascade for nested objects" << endl;
+        if (!cascade.load(samples::findFile(cascadeName)))
         {
-            capture >> frame;
-            flip(frame,frame,1);
-            if( frame.empty() )
-                break;
+            cerr << "ERROR: Could not load classifier cascade" << endl;
+            return -1;
+        }
 
-            //Mat frame1 = frame.clone();
-            drawTransparency2(frame, image, 270, 195);
-            drawTransparency2(frame, Otherimages[0], 20, 20);
-            drawTransparency2(frame, Otherimages[1], 520, 20);
-            drawTransparency2(frame, Otherimages[2], 20, 370);
-            drawTransparency2(frame, Otherimages[3], 520, 370);
-            detectAndDraw( frame, cascade, nestedCascade, scale);
+        if(!capture.open(inputName))
+        {
+            cout << "Capture from camera #" <<  inputName << " didn't work" << endl;
+            return 1;
+        }
 
-            char c = (char)waitKey(10);
-            if( c == 27 || c == 'q' || c == 'Q' )
-                break;
+        if( capture.isOpened() )
+        {
+            //system("mpg321 /home/lara/Downloads/colors.mp3 &");
+            while(1)
+            {
+                capture >> frame;
+                flip(frame,frame,1);
+                if( frame.empty() )
+                    break;
+
+                //Mat frame1 = frame.clone();
+                drawTransparency2(frame, image, 270, 195);
+                drawTransparency2(frame, Otherimages[0], 20, 20);
+                drawTransparency2(frame, Otherimages[1], 520, 20);
+                drawTransparency2(frame, Otherimages[2], 20, 370);
+                drawTransparency2(frame, Otherimages[3], 520, 370);
+                if(detectAndDraw( frame, cascade, nestedCascade, scale, MainColorPath, otherPaths))
+                {
+                    system("mpg321 /home/lara/Downloads/colors.mp3 &");
+                    break;
+                }
+
+                char c = (char)waitKey(10);
+                if( c == 27 || c == 'q' || c == 'Q' )
+                    break;
+            }
         }
     }
 

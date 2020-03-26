@@ -11,6 +11,19 @@
 using namespace std;
 using namespace cv;
 
+void Start(){
+   while(1){
+        Mat image;
+        image = imread("start.jpg", WINDOW_AUTOSIZE);
+        imshow("Start", image);
+        char s = (char)waitKey(10);
+            if(s == 's' || s == 'S' ){
+                destroyAllWindows();
+                break;}
+    
+    }
+}
+
 void detectAndDraw( Mat& img, CascadeClassifier& cascade,
                     CascadeClassifier& nestedCascade,
                     double scale);
@@ -47,19 +60,19 @@ void mp3Player(char file)
     switch(file)
     {
         case '0':
-            system("mpg321 /home/lara/Downloads/LearningColors-master/colors/0.mp3 &");
+            system("mpg321 /home/dudahardman/Área de Trabalho/LearningColors-master/colors/0.mp3 &");
         break;
 
         case '1':
-            system("mpg321 /home/lara/Downloads/LearningColors-master/colors/1.mp3 &");
+            system("mpg321 /home/dudahardman/Área de Trabalho/LearningColors-master/colors/1.mp3 &");
         break;
 
         case '2':
-            system("mpg321 /home/lara/Downloads/LearningColors-master/colors/2.mp3 &");
+            system("mpg321 /home/dudahardman/Área de Trabalho/LearningColors-master/colors/2.mp3 &");
         break;
 
         case '3':
-            system("mpg321 /home/lara/Downloads/LearningColors-master/colors/3.mp3 &");
+            system("mpg321 /home/dudahardman/Área de Trabalho/LearningColors-master/colors/3.mp3 &");
     }
 }
 
@@ -235,7 +248,7 @@ int main(int argc, const char** argv){
     CascadeClassifier cascade, nestedCascade;
     double scale = 1;
     
-    string folder = "/home/lara/Downloads/opencv-4.1.2/data/haarcascades/";
+    string folder = "/home/dudahardman/Downloads/opencv-4.1.2/data/haarcascades/";
     cascadeName = folder + "haarcascade_frontalface_alt.xml";
     nestedCascadeName = folder + "haarcascade_eye_tree_eyeglasses.xml";
     inputName = "/dev/video0";
@@ -249,17 +262,19 @@ int main(int argc, const char** argv){
         //exception
         return -1;
     }
-        
+    
+    Start();
+
     if(!capture.open(inputName))
     {
         cout << "Capture from camera #" <<  inputName << " didn't work" << endl;
         //exception
         return 1;
     }
-
+    
     if( capture.isOpened() )
     {
-        //system("mpg321 /home/lara/Downloads/colors.mp3 &");
+        //system("mpg321 /home/dudahardman/Área de Trabalho/colors.mp3 &");
         vector<string> paths(5);
         paths = newGame();
         while(1)

@@ -19,14 +19,11 @@ void Start(){
         char s = (char)waitKey(10);
             if(s == 's' || s == 'S' ){
                 destroyAllWindows();
-                break;}
+                break;
+            }
     
     }
 }
-
-void detectAndDraw( Mat& img, CascadeClassifier& cascade,
-                    CascadeClassifier& nestedCascade,
-                    double scale);
 
 string cascadeName;
 string nestedCascadeName;
@@ -60,29 +57,33 @@ void mp3Player(char file)
     switch(file)
     {
         case '0':
-            system("mpg321 /home/dudahardman/Área de Trabalho/LearningColors-master/colors/0.mp3 &");
+            system("mpg321 /home/lara/Downloads/LearningColors-master/colors/0.mp3 &");
+            //system("mpg321 /home/dudahardman/Área de Trabalho/LearningColors-master/colors/0.mp3 &");
         break;
 
         case '1':
-            system("mpg321 /home/dudahardman/Área de Trabalho/LearningColors-master/colors/1.mp3 &");
+            system("mpg321 /home/lara/Downloads/LearningColors-master/colors/1.mp3 &");
+            //system("mpg321 /home/dudahardman/Área de Trabalho/LearningColors-master/colors/1.mp3 &");
         break;
 
         case '2':
-            system("mpg321 /home/dudahardman/Área de Trabalho/LearningColors-master/colors/2.mp3 &");
+            system("mpg321 /home/lara/Downloads/LearningColors-master/colors/2.mp3 &");
+            //system("mpg321 /home/dudahardman/Área de Trabalho/LearningColors-master/colors/2.mp3 &");
         break;
 
         case '3':
-            system("mpg321 /home/dudahardman/Área de Trabalho/LearningColors-master/colors/3.mp3 &");
+            system("mpg321 /home/lara/Downloads/LearningColors-master/colors/3.mp3 &");
+            //system("mpg321 /home/dudahardman/Área de Trabalho/LearningColors-master/colors/3.mp3 &");
     }
 }
 
 int detectAndDraw( Mat& img, CascadeClassifier& cascade,
                     CascadeClassifier& nestedCascade,
-                    double scale, vector<string> paths)
+                    double scale, vector<string> paths, int *pontos, int *recorde, bool *posicaoJogoAnterior)
 {
     static int frames = 0;
     double t = 0;
-    vector<Rect> faces, faces2;
+    vector<Rect> faces;
     const static Scalar colors[] =
     {
         Scalar(255,0,0),
@@ -116,51 +117,85 @@ int detectAndDraw( Mat& img, CascadeClassifier& cascade,
     for ( size_t i = 0; i < faces.size(); i++ )
     {
         Rect r = faces[i];
-        printf( "[%3d, %3d]\n", r.x, r.y);
+        //printf( "[%3d, %3d]\n", r.x, r.y);
 
-        if(((r.x > 20)&&(r.x < 120))&&((r.y > 20)&&(r.y < 90)))
+        if((r.x > 20)&&(r.x < 120)&&(r.y > 20)&&(r.y < 90)&&!(*posicaoJogoAnterior))
         {
             if(paths[0][3] == paths[1][3])
             {
                 mp3Player(paths[0][3]);
-                //pontos++;
+                *pontos++;
+                *posicaoJogoAnterior = true;
                 return 1;
             }
-            // else zeraPontuacao(&pontos);
+             else
+             {
+                if(*pontos > *recorde)
+                    *recorde = *pontos;
+
+                *pontos = 0;
+                return 2;
+             }
         }
 
-        else if(((r.x > 420)&&(r.x < 520))&&((r.y > 20)&&(r.y < 90)))
+        else if((r.x > 420)&&(r.x < 520)&&(r.y > 20)&&(r.y < 90)&&!(*posicaoJogoAnterior))
         {
             if(paths[0][3] == paths[2][3])
             {
                 mp3Player(paths[0][3]);
-                //pontos++;
+                *pontos++;
+                *posicaoJogoAnterior = true;
                 return 1;
             }
-            // else zeraPontuacao(&pontos);
+            else
+             {
+                if(*pontos > *recorde)
+                    *recorde = *pontos;
+
+                *pontos = 0;
+                return 2;
+             }
         }
         
-        else if (((r.x > 20)&&(r.x < 120))&&((r.y > 300)&&(r.y < 370)))
+        else if ((r.x > 20)&&(r.x < 120)&&(r.y > 300)&&(r.y < 370)&&!(*posicaoJogoAnterior))
         {
             if(paths[0][3] == paths[3][3])
             {
                 mp3Player(paths[0][3]);
-                //pontos++;
+                *pontos++;
+                *posicaoJogoAnterior = true;
                 return 1;
             }
-            // else zeraPontuacao(&pontos);
+            else
+             {
+                if(*pontos > *recorde)
+                    *recorde = *pontos;
+
+                *pontos = 0;
+                return 2;
+             }
         }
 
-        else if (((r.x > 420)&&(r.x < 520))&&((r.y > 300)&&(r.y < 370)))
+        else if ((r.x > 420)&&(r.x < 520)&&(r.y > 300)&&(r.y < 370)&&!(*posicaoJogoAnterior))
         {
             if(paths[0][3] == paths[4][3])
             {
                 mp3Player(paths[0][3]);
-                //pontos++;
+                *pontos++;
+                *posicaoJogoAnterior = true;
                 return 1;
             }
-            // else zeraPontuacao(&pontos);
+            else
+             {
+                if(*pontos > *recorde)
+                    *recorde = *pontos;
+
+                *pontos = 0;
+                return 2;
+             }
         }
+        else 
+            *posicaoJogoAnterior = false;
 
         Mat smallImgROI;
         vector<Rect> nestedObjects;
@@ -247,8 +282,14 @@ int main(int argc, const char** argv){
     string inputName;
     CascadeClassifier cascade, nestedCascade;
     double scale = 1;
+    int pontos = 0, recorde = 0;
+    bool posicaoJogoAnterior = false;
+
+    //lê o arquivo
+    //recorde = valorLidoNoArquivo;
     
-    string folder = "/home/dudahardman/Downloads/opencv-4.1.2/data/haarcascades/";
+    string folder = "/home/lara/Downloads/opencv-4.1.2/data/haarcascades/";
+    //string folder = "/home/dudahardman/Downloads/opencv-4.1.2/data/haarcascades/";
     cascadeName = folder + "haarcascade_frontalface_alt.xml";
     nestedCascadeName = folder + "haarcascade_eye_tree_eyeglasses.xml";
     inputName = "/dev/video0";
@@ -290,8 +331,14 @@ int main(int argc, const char** argv){
             drawTransparency2(frame, imread(paths[2], IMREAD_UNCHANGED), 520, 20);
             drawTransparency2(frame, imread(paths[3], IMREAD_UNCHANGED), 20, 370);
             drawTransparency2(frame, imread(paths[4], IMREAD_UNCHANGED), 520, 370);
-            if(detectAndDraw( frame, cascade, nestedCascade, scale, paths))
+            if(detectAndDraw(frame, cascade, nestedCascade, scale, paths, &pontos, &recorde, &posicaoJogoAnterior) == 1)
                 paths = newGame();
+            else if(detectAndDraw(frame, cascade, nestedCascade, scale, paths, &pontos, &recorde, &posicaoJogoAnterior) == 2)
+            {
+                destroyAllWindows();
+                Start();
+                paths = newGame();
+            }
 
             char c = (char)waitKey(10);
             if( c == 27 || c == 'q' || c == 'Q' )

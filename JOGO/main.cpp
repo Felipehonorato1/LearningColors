@@ -205,13 +205,13 @@ vector<string> Start(bool *posicaoJogoAnterior){
         image = imread("start.jpg", WINDOW_AUTOSIZE);
         imshow("Start", image);
 
-        if(waitKey(10) == 's' || waitKey(10) == 'S' ){
+        if(waitKey(30) == 's' || waitKey(30) == 'S' ){
             destroyAllWindows();
             *posicaoJogoAnterior = true;
             return newGame();
         }
 
-        if (waitKey(30) == 27) //wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
+        if (waitKey(10) == 27) //wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
         {
             cout << "Esc key pressed by user" << endl;
             throw 0; 
@@ -323,7 +323,7 @@ int main(int argc, const char** argv){
         imshow("Thresholded Image", imgThresholded); //show the thresholded image
         imshow("Original", imgOriginal); //show the original image
 
-        if (waitKey(30) == 27) //wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
+        if (waitKey(10) == 27) //wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
         {
             cout << "Esc key pressed by user" << endl;
             break; 

@@ -16,7 +16,7 @@ void SalvaRecorde(int recorde){
     ofstream arquivo;
     arquivo.open("recorde.txt");
     if(!arquivo.is_open()){
-        cout << "Nao foi possivel abrir o arquivo." << endl;
+        cout << "Impossivel ler o arquivo" << endl;
     }
     arquivo << recorde;
     arquivo.close();
@@ -27,23 +27,23 @@ void mp3Player(char file)
     switch(file)
     {
         case '0':
-            //system("mpg321 /home/lara/Downloads/LearningColors-master/colors/0.mp3 &");
-            system("mpg321 /home/dudahardman/Área de Trabalho/LearningColors/colors/0.mp3 &");
+            system("mpg321 /home/lara/Downloads/LearningColors-master/colors/0.mp3 &");
+            //system("mpg321 /home/dudahardman/Área de Trabalho/LearningColors-master/colors/0.mp3 &");
         break;
 
         case '1':
-            //system("mpg321 /home/lara/Downloads/LearningColors-master/colors/1.mp3 &");
-            system("mpg321 /home/dudahardman/Área de Trabalho/LearningColors/colors/1.mp3 &");
+            system("mpg321 /home/lara/Downloads/LearningColors-master/colors/1.mp3 &");
+            //system("mpg321 /home/dudahardman/Área de Trabalho/LearningColors-master/colors/1.mp3 &");
         break;
 
         case '2':
-            //system("mpg321 /home/lara/Downloads/LearningColors-master/colors/2.mp3 &");
-            system("mpg321 /home/dudahardman/Área de Trabalho/LearningColors/colors/2.mp3 &");
+            system("mpg321 /home/lara/Downloads/LearningColors-master/colors/2.mp3 &");
+            //system("mpg321 /home/dudahardman/Área de Trabalho/LearningColors-master/colors/2.mp3 &");
         break;
 
         case '3':
-            //system("mpg321 /home/lara/Downloads/LearningColors-master/colors/3.mp3 &");
-            system("mpg321 /home/dudahardman/Área de Trabalho/LearningColors/colors/3.mp3 &");
+            system("mpg321 /home/lara/Downloads/LearningColors-master/colors/3.mp3 &");
+            //system("mpg321 /home/dudahardman/Área de Trabalho/LearningColors-master/colors/3.mp3 &");
     }
 }
 
@@ -56,16 +56,15 @@ int detectColor(int posX, int posY, vector<string> paths, int *pontos, int *reco
         {
             mp3Player(paths[0][3]);
             *pontos = *pontos + 1;
+            if(*pontos > *recorde)
+                *recorde = *pontos;
             *posicaoJogoAnterior = true;
-            if(*pontos > *recorde){
-                *recorde = *pontos;}
             return 1;
         }
             else
         {
             if(*pontos > *recorde)
                 *recorde = *pontos;
-
             *pontos = 0;
             return 2;
         }
@@ -77,16 +76,15 @@ int detectColor(int posX, int posY, vector<string> paths, int *pontos, int *reco
         {
             mp3Player(paths[0][3]);
             *pontos = *pontos + 1;
+            if(*pontos > *recorde)
+                *recorde = *pontos;
             *posicaoJogoAnterior = true;
-            if(*pontos > *recorde){
-                *recorde = *pontos;}
             return 1;
         }
         else
         {
             if(*pontos > *recorde)
                 *recorde = *pontos;
-
             *pontos = 0;
             return 2;
         }
@@ -98,16 +96,15 @@ int detectColor(int posX, int posY, vector<string> paths, int *pontos, int *reco
         {
             mp3Player(paths[0][3]);
             *pontos = *pontos + 1;
+            if(*pontos > *recorde)
+                *recorde = *pontos;
             *posicaoJogoAnterior = true;
-            if(*pontos > *recorde){
-                *recorde = *pontos;}
             return 1;
         }
         else
         {
             if(*pontos > *recorde)
                 *recorde = *pontos;
-
             *pontos = 0;
             return 2;
         }
@@ -119,24 +116,21 @@ int detectColor(int posX, int posY, vector<string> paths, int *pontos, int *reco
         {
             mp3Player(paths[0][3]);
             *pontos = *pontos + 1;
+            if(*pontos > *recorde)
+                *recorde = *pontos;
             *posicaoJogoAnterior = true;
-            if(*pontos > *recorde){
-                *recorde = *pontos;}
             return 1;
         }
         else
         {
             if(*pontos > *recorde)
                 *recorde = *pontos;
-
             *pontos = 0;
             return 2;
         }
     }
     else if ((posX > 290)&&(posX < 370)&&(posY > 220)&&(posY < 260))
     {
-        if(*pontos > *recorde){
-                *recorde = *pontos;}
         *posicaoJogoAnterior = false;
         cout << "=====================================READY======================================" << endl;
     }
@@ -223,16 +217,26 @@ vector<string> newGame()
 vector<string> Start(bool *posicaoJogoAnterior, int recorde){
     while(1){
         Mat image;
+        
         image = imread("start.jpg", WINDOW_AUTOSIZE);
+        
+        putText(image, //target image
+        "MAX SCORE: " + to_string(recorde), //text
+        cv::Point(200, 360),
+        cv::FONT_HERSHEY_DUPLEX,
+        1.0,
+        CV_RGB(255, 255, 255), //font color
+        2);
+
         imshow("Start", image);
 
-        if(waitKey(30) == 's' || waitKey(30) == 'S' ){
+        if(waitKey(5) == 's' || waitKey(5) == 'S' ){
             destroyAllWindows();
             *posicaoJogoAnterior = true;
             return newGame();
         }
 
-        if (waitKey(10) == 27) //wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
+        if (waitKey(5) == 27)
         {
             SalvaRecorde(recorde);
             cout << "****RECORDE SALVO: " << recorde << endl;
@@ -241,7 +245,6 @@ vector<string> Start(bool *posicaoJogoAnterior, int recorde){
         }    
     }
 }
-
 
 int main(int argc, const char** argv){
     int pontos = 0, recorde = 0;
@@ -264,27 +267,30 @@ int main(int argc, const char** argv){
         return -1;
     }
 
-    //namedWindow("Control", WINDOW_AUTOSIZE); //create a window called "Control"
+    namedWindow("Control", WINDOW_AUTOSIZE); //create a window called "Control"
 
-    //     //LARA
-    // int iLowH = 22;
-    // int iHighH = 38;
+    //LARA
+    int iLowH = 22;
+    int iHighH = 38;
+
+    int iLowS = 65; 
+    int iHighS = 165;
+
+    int iLowV = 70;
+    int iHighV = 255;
+
+    //DUDA
+    // int iLowH = 20;
+    // int iHighH = 30;
 
     // int iLowS = 65; 
     // int iHighS = 165;
+    // int iLowS = 100; 
+    // int iHighS = 255;
 
     // int iLowV = 70;
+    // int iLowV = 100;
     // int iHighV = 255;
-    
-        //DUDA
-    int iLowH = 20;
-    int iHighH = 30;
-
-    int iLowS = 100; 
-    int iHighS = 255;
-
-    int iLowV = 100;
-    int iHighV = 255;
 
     //Create trackbars in "Control" window
     createTrackbar("LowH", "Control", &iLowH, 179); //Hue (0 - 179)
@@ -348,13 +354,12 @@ int main(int argc, const char** argv){
         // if the area <= 1000000, I consider that the there are no object in the image and it's because of the noise, the area is not zero 
         if (oMoments.m00 > 1000000)
         {
-            if(detectColor(oMoments.m10/oMoments.m00, oMoments.m01/oMoments.m00, paths, &pontos, &recorde, &posicaoJogoAnterior) == 1){
+            if(detectColor(oMoments.m10/oMoments.m00, oMoments.m01/oMoments.m00, paths, &pontos, &recorde, &posicaoJogoAnterior) == 1)
                 paths = newGame();
-            }else if(detectColor(oMoments.m10/oMoments.m00, oMoments.m01/oMoments.m00, paths, &pontos, &recorde, &posicaoJogoAnterior) == 2)
+            else if(detectColor(oMoments.m10/oMoments.m00, oMoments.m01/oMoments.m00, paths, &pontos, &recorde, &posicaoJogoAnterior) == 2)
             {
                 try
                 {
-                    destroyAllWindows();
                     paths = Start(&posicaoJogoAnterior, recorde);
                 }
                 catch (int i)
@@ -367,11 +372,11 @@ int main(int argc, const char** argv){
         imshow("Thresholded Image", imgThresholded); //show the thresholded image
         imshow("Original", imgOriginal); //show the original image
 
-        if (waitKey(10) == 27) //wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
+        if (waitKey(5) == 27)
         {
-            cout << "Esc key pressed by user" << endl;
             SalvaRecorde(recorde);
             cout << "****RECORDE SALVO: " << recorde << endl;
+            cout << "Esc key pressed by user" << endl;
             break; 
         }
     }
